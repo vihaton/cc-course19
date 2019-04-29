@@ -12,6 +12,11 @@ from nltk.corpus import abc
 from nltk.corpus import brown
 
 
+#TODO 
+# - evaluate similar words and pick a good replacement
+# - make sure the return method returns the correct things
+# - possibly make a way to save the model and reload it 
+
 
 # we could possibly save the model to speed up the process
 def train_model():
@@ -57,13 +62,15 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
             similar_words_fast = model.wv.similar_by_word(word, 5)
             print("similar words to " + word , similar_words_fast)
             
-            # now simply picks the closest word (I started a evaluate_replacement method but have not had the time to implement this)
-            changed_pair.append(similar_words_fast[1])
+            changed_pair.append(similar_words_fast[4])
 
         final_pairs.append(changed_pair)
 
     for p in final_pairs:
-        print(p)
+        print(p[0])
+        print(p[1])
+        print(type(p[0]))
+        print("__________________")
     
     # return method needs work such that it returns the correct thing
     return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
@@ -72,8 +79,6 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
 # For testing
 if __name__ == '__main__':
     example_emotion = 'sad'
-    example_word_pairs = [{'word_pair': ("human", "god"), 'verb': 'was'}, 
-                            ]
-    DEBUG = False
+    example_word_pairs = [{'word_pair': ("human", "brutal"), 'verb': 'was'}, ]
     output = generate_word_pairs(example_emotion, example_word_pairs)
     print(output)
