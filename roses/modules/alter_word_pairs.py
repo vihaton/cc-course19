@@ -3,10 +3,17 @@ import nltk
 import gensim
 import os
 from gensim.models import FastText
+
+# This was a workaround for utils-module not found -error, 
+# there must be a better way to do it.
+import sys
+sys.path.append("..") 
+
 from utils import read_json_file
 
 nltk.download('abc')
 nltk.download('brown')
+nltk.download('punkt')
 
 from nltk.corpus import abc
 from nltk.corpus import brown
@@ -15,10 +22,11 @@ from nltk.corpus import brown
 #TODO 
 # - evaluate similar words and pick a good replacement
 # - make sure the return method returns the correct things
-# - possibly make a way to save the model and reload it 
+# - possibly make a way to save the model and reload it - STARTED, runs nicely here
+#       but doesn't work from main.py yet 
 
 
-# we could possibly save the model to speed up the process
+# we could possibly save the model to speed up the process - STARTED
 def train_model():
 
     data = read_json_file("data/bible_kjv_wrangled.json")
@@ -51,7 +59,17 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     Generates a bunch of word pairs depending on input word pairs and emotion.
     """
 
-    model = train_model()
+    model_name = 'bible_model'
+    model_dir = '../data/' + model_name
+
+    exists = os.path.isfile(model_dir)
+    if exists:
+        print('Found a pretrained FastText model')
+        model = FastText.load(model_dir)
+    else:
+        model = train_model()
+        model.save(model_dir)
+    print(model)
 
     final_pairs = []
     for pair in word_pairs:
