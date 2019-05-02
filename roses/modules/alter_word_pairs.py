@@ -31,7 +31,7 @@ from nltk.corpus import brown
 
 # we could possibly save the model to speed up the process - STARTED
 def train_model():
-    data = read_json_file("roses/data/bible_kjv_wrangled.json")
+    data = read_json_file("data/bible_kjv_wrangled.json")
     sentences = list(data.values())
     # Do we want everything in lowercase?
     sentences = [s.lower() for s in sentences]
@@ -71,7 +71,6 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
 
     model_name = 'bible_model'
     model_dir = get_path('data/' + model_name)
-    print(read_json_file("data/bible_kjv_wrangled.json"))
 
     exists = os.path.isfile(model_dir)
     if exists:
@@ -85,8 +84,8 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     final_pairs = []
     for pair in word_pairs:
         # changed_pair =[]
-        noun = find_alternative(pair['word_pair'][0], ['NN', 'NNS', 'NNP', 'NNPS'], model)
-        adjective = find_alternative(pair['word_pair'][1], ['JJ', 'JJR', 'JJS'], model)
+        noun = find_alternative(pair[0], ['NN', 'NNS', 'NNP', 'NNPS'], model)
+        adjective = find_alternative(pair[1], ['JJ', 'JJR', 'JJS'], model)
         changed_pair = [noun, adjective]
 
         """
@@ -119,7 +118,7 @@ def find_alternative(word, part_of_speechs, model):
         tagged = nltk.pos_tag([x[0] for x in similar_words_fast])
         right_part = [x[0] for x in tagged if x[1] in part_of_speechs]
         if right_part:
-            index = randint(0, len(right_part))
+            index = randint(0, len(right_part)-1)
             return right_part[index]
         tries += 10
         # return 'foo'
