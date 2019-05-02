@@ -127,6 +127,6 @@ def find_alternative(word, part_of_speechs, model):
 # For testing
 if __name__ == '__main__':
     example_emotion = 'sad'
-    example_word_pairs = [{'word_pair': ("human", "brutal"), 'verb': 'was'}]
+    example_word_pairs = [("human", "brutal")]
     output = generate_word_pairs(example_emotion, example_word_pairs)
     print(output)
