@@ -50,6 +50,7 @@ def download_gutenberg(dest=None):
     print("Downloading the Gutenberg dataset to {}".format(dest_fp))
 
     url = "https://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.bz2"
+    print(urllib.request.urlretrieve(url, dest_fp)[1])
     
     return
 

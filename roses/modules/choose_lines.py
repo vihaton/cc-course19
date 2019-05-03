@@ -1,10 +1,8 @@
 from typing import Dict, List
-import json
 import random
-import os
-from roses.utils import read_json_file # works with main.py
-# from utils import read_json_file # works with roses.py
+from roses.utils import read_json_file
 import string
+
 
 def find_lines(emotion: str, rhyming_partials: List[Dict]):
     """
@@ -12,21 +10,18 @@ def find_lines(emotion: str, rhyming_partials: List[Dict]):
     """
 
     data = read_json_file("data/bible_kjv_wrangled.json")
-    
+
     # There probably is a better/faster way to do this using dictionaries but I dont know how rn
     keys = []
     sentences = []
     last_word_of_sentences = []
-    
+
     for key, value in data.items():
         keys.append(key)
         sentences.append(value)
         last_word_of_sentence = value.translate(str.maketrans('', '', string.punctuation))
         last_word_of_sentence = last_word_of_sentence.strip().split(' ')[-1]
         last_word_of_sentences.append(last_word_of_sentence.lower())
-
-    
- 
 
     ret = []
     for partial in rhyming_partials:
@@ -37,8 +32,6 @@ def find_lines(emotion: str, rhyming_partials: List[Dict]):
                 for ix in indices:
                     rhyming_sentences.append(keys[ix])
 
-
-
             third = data[random.choice(list(data))]
 
             # selects rhyming sentence if there is at least one, else select random sentence as before
@@ -46,7 +39,7 @@ def find_lines(emotion: str, rhyming_partials: List[Dict]):
                 fourth = data[random.choice(rhyming_sentences)]
             else:
                 continue
-            
+
             new_partial = partial.copy()
             new_partial['rest'] = (third, fourth)
             ret.append(new_partial)

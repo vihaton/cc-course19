@@ -5,5 +5,5 @@ In alphabetical order:
 
 - Babatunde Anafi
 - Fabio Colella
-- ~~Niclas Joswig~~ (_Abandoned_)
+- Niclas Joswig
 - Tu (Tony) Nguyen Tuan
