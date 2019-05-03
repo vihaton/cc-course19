@@ -5,6 +5,7 @@ nltk.download('cmudict')
 
 DEBUG = False
 REMOVE_SUBWORD_RHYMES = True
+MAX_RHYMES = 25
 
 WORDS = ['crisscross', 'dos', 'chess', 'completed', 'depleted', 'hugged']
 
@@ -23,7 +24,7 @@ def rhyme(inp, level):
         for word, pron in entries:
             if pron[-level:] == syllable[-level:]:
                 rhyming_words.append(word)
-            if len(rhyming_words) > 10: # we have enough rhymes already
+            if len(rhyming_words) > MAX_RHYMES: # we have enough rhymes already
                 break
         rhyming_words = evaluate_rhymes(word, rhyming_words, REMOVE_SUBWORD_RHYMES)
         rhymes += rhyming_words
