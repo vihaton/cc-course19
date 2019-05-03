@@ -19,7 +19,12 @@ def rhyme(inp, level):
     if DEBUG: print('syllables before matching rhymes', syllables)
     rhymes = []
     for (word, syllable) in syllables:
-        rhyming_words = [word for word, pron in entries if pron[-level:] == syllable[-level:]]
+        rhyming_words = []
+        for word, pron in entries:
+            if pron[-level:] == syllable[-level:]:
+                rhyming_words.append(word)
+            if len(rhyming_words) > 10: # we have enough rhymes already
+                break
         rhyming_words = evaluate_rhymes(word, rhyming_words, REMOVE_SUBWORD_RHYMES)
         rhymes += rhyming_words
         if DEBUG: print(rhymes, " how many rhymes ", len(rhymes))
@@ -52,7 +57,7 @@ def evaluate_rhymes(word: str, rhymes: List[str], remove_subwords=False) -> List
 # setting how strict the rhyme has to be, can be changed
 def define_strictness_of_rhyme(word_to_rhyme):
     strictness = 3
-    if len(word_to_rhyme) <= 4:
+    if len(word_to_rhyme) < 4:
         strictness = 2
     return strictness
 
