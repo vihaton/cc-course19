@@ -10,24 +10,26 @@ from random import randint
 import sys
 sys.path.append("..") 
 
-from utils import read_json_file
+from roses.utils import read_json_file
 
-nltk.download('abc')
-nltk.download('brown')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('abc')
+# nltk.download('brown')
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
 
 from nltk.corpus import abc
 from nltk.corpus import brown
 
+DEBUG = True
 
-def generate_word_pairs(emotion: str, rhyming_partials: List[Dict]):
+
+def alter_rest(emotion: str, rhyming_partials: List[Dict]):
     """
     Alters the third and fourth lines to be more creative.
     """
-
+    if DEBUG: print(f'im alive bitches')
     model_name = 'bible_model'
-    model_dir = '../data/' + model_name
+    model_dir = 'roses/data/' + model_name
 
     exists = os.path.isfile(model_dir)
     if exists:
@@ -62,7 +64,6 @@ def generate_word_pairs(emotion: str, rhyming_partials: List[Dict]):
                 print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
                 third[x] = new_word
         third = [x[0] for x in third]
-        partial['rest'][0] = " ".join(third)
 
         # TODO line 4
         fourth = nltk.tokenize.word_tokenize(fourth)
@@ -84,15 +85,15 @@ def generate_word_pairs(emotion: str, rhyming_partials: List[Dict]):
 
         fourth = [x[0] for x in fourth]
         fourth.append(last_word)
-        print(fourth)
-        partial['rest'][1] = " ".join(fourth)
+        if DEBUG: print(fourth)
+        partial['rest'] = (" ".join(third), " ".join(fourth))
 
         ret.append(partial)
 
     return ret
 
 
-def alter_rest(emotion: str, rhyming_partials: List[Dict]):
+def old_alter_rest(emotion: str, rhyming_partials: List[Dict]):
     """
     Alters the third and fourth lines to be more creative.
     """
@@ -109,5 +110,5 @@ def alter_rest(emotion: str, rhyming_partials: List[Dict]):
 if __name__ == '__main__':
     example_emotion = 'angry'
     example_rhyming_partials = [{'rest': ["there came an old man from his work out of the field at even", "he shall suffer loss"]}, ]
-    output = generate_word_pairs(example_emotion, example_rhyming_partials)
+    output = alter_rest(example_emotion, example_rhyming_partials)
     print(output)
