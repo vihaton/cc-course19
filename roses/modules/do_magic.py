@@ -20,7 +20,7 @@ from roses.utils import read_json_file
 from nltk.corpus import abc
 from nltk.corpus import brown
 
-DEBUG = True
+DEBUG = False
 
 
 def alter_rest(emotion: str, rhyming_partials: List[Dict]):
@@ -61,7 +61,7 @@ def alter_rest(emotion: str, rhyming_partials: List[Dict]):
                         if similarity > max_similarity:
                             max_similarity = similarity
                             new_word = s  
-                print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
+                if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
                 third[x] = new_word
         third = [x[0] for x in third]
 
@@ -80,7 +80,7 @@ def alter_rest(emotion: str, rhyming_partials: List[Dict]):
                         if similarity > max_similarity:
                             max_similarity = similarity
                             new_word = s  
-                print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
+                if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
                 fourth[x] = new_word
 
         fourth = [x[0] for x in fourth]
