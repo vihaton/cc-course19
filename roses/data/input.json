@@ -1,16 +1,50 @@
 [
-  ["human", "boss"],
-  ["animal", "legged"],
-  ["activity", "fishing"],
-  ["animal", "venomous"], 
-  ["animal", "adorable"], 
-  ["animal", "mythical"], 
-  ["location", "battlefield"], 
-  ["weather", "rain"], 
-  ["human", "evil"], 
-  ["human", "creative"], 
-  ["human", "caring"], 
-  ["human", "deceptive"], 
-  ["human", "liberal"], 
-  ["human", "compassionate"]
+  [
+    "activity",
+    "meeting"
+  ],
+  [
+    "animal",
+    "venomous"
+  ],
+  [
+    "animal",
+    "social"
+  ],
+  [
+    "animal",
+    "unusual"
+  ],
+  [
+    "location",
+    "cemetery"
+  ],
+  [
+    "weather",
+    "typhoon"
+  ],
+  [
+    "human",
+    "ruthless"
+  ],
+  [
+    "human",
+    "brutal"
+  ],
+  [
+    "human",
+    "caring"
+  ],
+  [
+    "human",
+    "liberal"
+  ],
+  [
+    "human",
+    "creative"
+  ],
+  [
+    "human",
+    "barbaric"
+  ]
 ]
