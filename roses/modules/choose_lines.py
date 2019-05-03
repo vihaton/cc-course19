@@ -3,6 +3,7 @@ import random
 from roses.utils import read_json_file
 import string
 
+DEBUG = False
 
 def find_lines(emotion: str, rhyming_partials: List[Dict]):
     """
@@ -48,6 +49,7 @@ def find_lines(emotion: str, rhyming_partials: List[Dict]):
 
 # For testing
 if __name__ == '__main__':
+    DEBUG = True
     example_emotion = 'sad'
     example_rhyming_partials = [{'word_pair': ('animal', 'legged'), 'verb': 'is', 'rhymes': [
         'gielgud', 'rugged', 'ragged', 'begged', 'pegged']}]
