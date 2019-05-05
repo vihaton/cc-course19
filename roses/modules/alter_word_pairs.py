@@ -1,7 +1,7 @@
 from typing import List, Tuple
 import nltk
 import os
-from gensim.models import FastText
+from gensim.models import FastText, KeyedVectors
 from random import randint
 import gensim.downloader as api
 
@@ -84,16 +84,27 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
 
     exists = os.path.isfile(model_dir)
     if exists:
-        print('Found a pretrained FastText Bible model')
+        print('FastText Bible model already trained')
         model = FastText.load(model_dir)
     else:
         model = train_model()
         model.save(model_dir)
-    print(model)
 
-    print("Loading pretrained model into memory (will take a minute)")
-    word_vec = api.load("glove-wiki-gigaword-100")
-    print("LOADED")
+
+
+    wv_model_name = 'wv_model'
+    wv_model_dir = get_path('data/' + wv_model_name)
+
+    exists = os.path.isfile(wv_model_dir)
+    if exists:
+        print('Found a pretrained word vector model')
+        word_vec = KeyedVectors.load(wv_model_dir)
+    else:
+        print("Loading pretrained model into memory (will take a minute)")
+        word_vec = api.load("glove-wiki-gigaword-100")
+        word_vec.save(wv_model_dir)
+        print("LOADED AND SAVED")
+
 
     final_pairs = []
 
