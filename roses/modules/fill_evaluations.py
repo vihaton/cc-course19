@@ -7,25 +7,27 @@ DEBUG = False
 # TODO evaluate novelty w.r.t. all the poems written previously (pushes the algo to search different parts of T)
 
 def eval_semantics(poem: List[str]):
-    """Does it make sense?
+  """Does it make sense?
   
   We have no idea.
   """
 
-    return 1
+  return 1
 
 
 def eval_length(poem: List[str]):
     """
-    Is it nice length?
-    exp(- Square root of the absolute distance to the optimal length).
+    Is it nice length? Punishes hardly if the poem is long
+
+    optimal length - length.
     """
     optimal_length = 77  # scientifically proven
 
     length = sum(len(line) for line in poem)
 
-    score = np.sqrt(np.abs(length - optimal_length))
-    score = np.exp(-score)
+    score = optimal_length - length
+    # score = np.sqrt(np.abs(length - optimal_length))
+    # score = np.exp(-score)
     if DEBUG: print(f'\teval length score {score}')
     return score
 
@@ -88,13 +90,30 @@ if __name__ == '__main__':
          "human is boss",
          "this project is not done",
          "and you should be closs"
+         ],        
+         ["Roses are red",
+         "human is boss",
+         "this project is not done",
+         "and you should be boss"
          ],
         ["Roses are red",
          "animal is legged",
          "this project is not done",
          "and you should be egged"
+         ],
+         ['Roses are red',
+          'humanity is harmless',
+          'And the sandman went killpath',
+          'For a johnnie must be blameless'
+         ],
+         ['Roses are red',
+          'humane is judicial',
+          'And he set the mephibosheth which he had pilled before the comforteth in the comforteth in the sap draught when the comforteth came to drink',
+          'and put it under a bushel'
          ]
+
     ]
     DEBUG = True
     output = evaluate_poems(example_emotion, example_word_pairs, example_poems)
-    print(output)
+    for poem in output:
+      print(poem[1], poem[0])
