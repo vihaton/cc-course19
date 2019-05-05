@@ -21,6 +21,8 @@ nltk.download('averaged_perceptron_tagger')
 from nltk.corpus import abc
 from nltk.corpus import brown
 
+DEBUG = False
+
 
 # TODO
 # - evaluate similar words and pick a good replacement
@@ -99,11 +101,12 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
 
         final_pairs.append(changed_pair)
 
-    for p in final_pairs:
-        print(p[0])
-        print(p[1])
-        print(type(p[0]))
-        print("__________________")
+    if DEBUG:
+        for p in final_pairs:
+            print(p[0])
+            print(p[1])
+            print(type(p[0]))
+            print("__________________")
 
     # return method needs work such that it returns the correct thing - DONE
     return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
@@ -113,7 +116,7 @@ def find_alternative(word, part_of_speechs, model):
     tries = 10
     while True:
         similar_words_fast = model.wv.similar_by_word(word, tries)
-        print("similar words to " + word, similar_words_fast)
+        if DEBUG: print("similar words to " + word, similar_words_fast)
 
         tagged = nltk.pos_tag([x[0] for x in similar_words_fast])
         right_part = [x[0] for x in tagged if x[1] in part_of_speechs]

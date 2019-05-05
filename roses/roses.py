@@ -13,7 +13,10 @@ from roses.modules.expand_poem import fill_and_create_text
 from roses.modules.fill_evaluations import evaluate_poems
 from roses.utils import read_json_file
 
+import time
+
 DATA_FOLDER = 'data/'
+DEBUG = False
 
 
 class PoemCreator:
@@ -34,10 +37,20 @@ class PoemCreator:
     def generate(self, emotion, word_pairs):
         """Poem generator.
         """
+
+        t1 = time.time()
         part1 = generate_word_pairs(emotion, word_pairs)
+        t2 = time.time()
+        if DEBUG: print(f'### time for part1 {t2-t1} \n\tinput was {emotion} {word_pairs}')
         part2 = generate_rhyming_words(emotion, part1)
+        t1 = time.time()
+        if DEBUG: print(f'\n### time for part2 {t1-t2} \n\tinput was {emotion} part1')
         part3 = find_lines(emotion, part2)
+        t2 = time.time()
+        if DEBUG: print(f'\n### time for part3 {t2-t1}\n\tinput was {emotion} part2\n\tinput length {len(part2)}')
         part4 = alter_rest(emotion, part3)
+        t1 = time.time()
+        if DEBUG: print(f'\n### time for part4 {t1-t2} \n\tinput was {emotion} part3\n\tinput length {len(part3)}')
         self.poems = fill_and_create_text(
             emotion,
             part4
@@ -81,11 +94,12 @@ class PoemCreator:
         print("Group Roses create with input args: {} {}".format(emotion, word_pairs))
         poems = self.evaluate(emotion, word_pairs,
                               self.generate(emotion, word_pairs))
-        poems.sort(key=lambda x: x[1])
+        poems.sort(key=lambda x: -x[1])
         return list(map(lambda x: ('\n'.join(x[0]), {'evaluation': x[1]}), poems[0:number_of_artifacts]))
 
 
 if __name__ == '__main__':
+    DEBUG = True
     poem_creator = PoemCreator()
     parser = argparse.ArgumentParser()
     parser.add_argument('emotion', help='Emotion for poem.')
