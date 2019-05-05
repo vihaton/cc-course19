@@ -13,9 +13,9 @@ def fill_and_create_text(emotion: str, rhyming_partials: List[Dict]):
     return [
         [
             'Roses are red',
-            f'{rp["word_pair"][0]} {fit_verb(rp["word_pair"], rp["verb"])} {rp["word_pair"][1]}',
-            rp['rest'][0],
-            rp['rest'][1]
+            f'{rp["word_pair"][0].capitalize()} {fit_verb(rp["word_pair"], rp["verb"])} {rp["word_pair"][1]}',
+            rp['rest'][0].capitalize(),
+            rp['rest'][1].capitalize()
         ]
         for rp in rhyming_partials
     ]
