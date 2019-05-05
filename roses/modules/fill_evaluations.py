@@ -64,6 +64,7 @@ def eval_similarity_to_emotion(poem: List[str], emotion: str, model):
     #   print(f'\tsimilarity to emotion {emotion} for line \n\t\t{line} \n\t\twas {s}')
     score += s
   
+  score /= 4
   if DEBUG: 
     print(f'\tsimilarity to emotion {emotion} was {score}')
 
@@ -81,6 +82,7 @@ def eval_dissimilarity_to_word_pairs(poem: List[str], word_pairs: List[Tuple[str
       # if DEBUG: print(f'\t{poem[1]} \t{pair[0]}\n\tscore dissimilarity find {score}')
       score += poem[1].find(pair[1])
     score = np.exp(-score)
+    score /= 10
     if DEBUG:
         print(f'\tscore for dissimilarity to word pairs {score}')
     return score
