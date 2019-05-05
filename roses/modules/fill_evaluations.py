@@ -40,9 +40,11 @@ def eval_rhytm(poem: List[str]):
 
 def eval_rhyming(poem: List[str]):
     """
-    How many letters needs to be changed to make the rhyming words the same.
+    Calculating the Hamming distance of  rhyming words, to see how much the 
+    words differ from each other.
 
-    If the words are same, score is zero 
+    Getting first scores between 0-5, scaled to be in range 0-1. 
+    If words are the same, score is zero. 
     """
 
     rhyme1 = poem[1].split(' ')[-1]
@@ -59,9 +61,10 @@ def eval_rhyming(poem: List[str]):
         score = get_score(rhyme2, rhyme1)
     else:
         score = get_score(rhyme1, rhyme2)
-        
-    if DEBUG: print(f'\teval rhyming score {score}')
-    return score
+
+    scaled_score = min(score, 5)/5
+    if DEBUG: print(f'\teval rhyming score {scaled_score}')
+    return scaled_score
 
 
 def eval_similarity_to_emotion(poem: List[str], emotion: str):
