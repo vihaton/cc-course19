@@ -1,3 +1,4 @@
+import itertools
 from typing import List, Tuple
 import numpy as np
 
@@ -93,17 +94,23 @@ def eval_similarity_to_emotion(poem: List[str], emotion: str, model):
 
 
 def eval_dissimilarity_to_word_pairs(poem: List[str], word_pairs: List[Tuple[str, str]]):
-    """Has the system been able to alter the word pair from the original input in a craetive manner?
-  
-  Measure distance to the original words, the longer the better. Does this make sense? IDK."""
+    """
+    Has the system been able to alter the word pair from the original input in a craetive manner?
+    Using a modified hamming distance to determine if words have changed enough.
 
-    for pair in word_pairs:
-      score = 0
-      score += poem[1].find(pair[0])
-      # if DEBUG: print(f'\t{poem[1]} \t{pair[0]}\n\tscore dissimilarity find {score}')
-      score += poem[1].find(pair[1])
-    score = np.exp(-score)
-    score /= 10
+    :param poem:
+    :param word_pairs:
+    :return:
+    """
+    new_words = (np.array(poem[1].split())[[0, 2]])
+    min1 = 100
+    min2 = 100
+    for item in itertools.product(new_words, word_pairs):
+        min1 = min(min1, get_hamming_distance(item[0], item[1][0]))
+        min2 = min(min2, get_hamming_distance(item[0], item[1][1]))
+
+    score = (np.clip(min1, 0, 5) + np.clip(min2, 0, 5)) / 10
+
     if DEBUG:
         print(f'\tscore for dissimilarity to word pairs {score}')
     return score
