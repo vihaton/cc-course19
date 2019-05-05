@@ -48,6 +48,35 @@ def eval_rhytm(poem: List[str]):
     return 1
 
 
+def eval_rhyming(poem: List[str]):
+    """
+    Calculating the Hamming distance of  rhyming words, to see how much the 
+    words differ from each other.
+
+    Getting first scores between 0-5, scaled to be in range 0-1. 
+    If words are the same, score is zero. 
+    """
+
+    rhyme1 = poem[1].split(' ')[-1]
+    rhyme2 = poem[3].split(' ')[-1]
+
+    def get_score(longer, shorter):
+        padded1 = f'{shorter:0>{len(longer)}}'
+        padded2 = f'{shorter:0<{len(longer)}}'
+        score1 = sum(c1 != c2 for c1, c2 in zip(padded1, longer))
+        score2 = sum(c1 != c2 for c1, c2 in zip(padded2, longer))
+        return min(score1, score2)
+
+    if len(rhyme2)>len(rhyme1):
+        score = get_score(rhyme2, rhyme1)
+    else:
+        score = get_score(rhyme1, rhyme2)
+
+    scaled_score = min(score, 5)/5
+    if DEBUG: print(f'\teval rhyming score {scaled_score}')
+    return scaled_score
+
+
 def eval_similarity_to_emotion(poem: List[str], emotion: str, model):
   """Is the feeling of the poem similar to the emotion given as input?
   
@@ -101,6 +130,7 @@ def evaluate_poems(emotion: str, word_pairs: List[Tuple[str, str]], poems: List[
       scores[i] += eval_semantics(poem)
       scores[i] += eval_length(poem)
       scores[i] += eval_rhytm(poem)
+      scores[i] += eval_rhyming(poem)
       scores[i] += eval_similarity_to_emotion(poem, emotion, model)
       scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs)
 
