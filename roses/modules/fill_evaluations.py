@@ -1,14 +1,16 @@
+import itertools
+import os
 from typing import List, Tuple
 
-import os
 import nltk
 import numpy as np
-
 from gensim.models import FastText
 
-from roses.utils import get_syllables_func
+from roses.utils import get_syllables_func, get_hamming_distance
+
 
 SCALE = (0, 1)
+
 
 DEBUG = False
 
@@ -82,17 +84,7 @@ def eval_rhyming(poem: List[str]):
     rhyme1 = poem[1].split(' ')[-1]
     rhyme2 = poem[3].split(' ')[-1]
 
-    def get_score(longer, shorter):
-        padded1 = f'{shorter:0>{len(longer)}}'
-        padded2 = f'{shorter:0<{len(longer)}}'
-        score1 = sum(c1 != c2 for c1, c2 in zip(padded1, longer))
-        score2 = sum(c1 != c2 for c1, c2 in zip(padded2, longer))
-        return min(score1, score2)
-
-    if len(rhyme2) > len(rhyme1):
-        score = get_score(rhyme2, rhyme1)
-    else:
-        score = get_score(rhyme1, rhyme2)
+    score = get_hamming_distance(rhyme2, rhyme1)
 
     scaled_score = min(score, 5) / 5
     if DEBUG:
@@ -126,19 +118,21 @@ def eval_similarity_to_emotion(poem: List[str], emotion: str, model):
 def eval_dissimilarity_to_word_pairs(poem: List[str], word_pairs: List[Tuple[str, str]]):
     """
     Has the system been able to alter the word pair from the original input in a craetive manner?
+    Using a modified hamming distance to determine if words have changed enough.
 
-    Measure distance to the original words, the longer the better. Does this make sense? IDK.
+    :param poem:
+    :param word_pairs:
+    :return:
     """
+    new_words = (np.array(poem[1].split())[[0, 2]])
+    min1 = 100
+    min2 = 100
+    for item in itertools.product(new_words, word_pairs):
+        min1 = min(min1, get_hamming_distance(item[0], item[1][0]))
+        min2 = min(min2, get_hamming_distance(item[0], item[1][1]))
 
-    score = 0
-    for pair in word_pairs:
-        score = 0
-        score += poem[1].find(pair[0])
-        if DEBUG:
-            print(f'\t{poem[1]} \t{pair[0]}\n\tscore dissimilarity find {score}')
-        score += poem[1].find(pair[1])
-    score = np.exp(-score)
-    score /= 10
+    score = (np.clip(min1, 0, 5) + np.clip(min2, 0, 5)) / 10
+
     if DEBUG:
         print(f'\tscore for dissimilarity to word pairs {score}')
     return score
