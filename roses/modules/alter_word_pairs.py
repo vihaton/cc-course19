@@ -4,6 +4,7 @@ import nltk
 import os
 from gensim.models import FastText
 from random import randint
+import gensim.downloader as api
 
 # # This was a workaround for utils-module not found -error,
 # # there must be a better way to do it.
@@ -13,13 +14,7 @@ from random import randint
 from roses.utils import read_json_file, get_path
 
 # TODO where should these be run?
-nltk.download('abc')
-nltk.download('brown')
-nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
-
-from nltk.corpus import abc
-from nltk.corpus import brown
 
 DEBUG = False
 
@@ -31,36 +26,6 @@ DEBUG = False
 #       but doesn't work from main.py yet 
 
 
-# we could possibly save the model to speed up the process - STARTED
-def train_model():
-    data = read_json_file("data/bible_kjv_wrangled.json")
-    sentences = list(data.values())
-    # Do we want everything in lowercase?
-    sentences = [s.lower() for s in sentences]
-
-    print("-----------Tokenize corpus-------------")
-    tokenized_sentences = []
-    for s in sentences:
-        tokens = nltk.word_tokenize(s)
-        tokenized_sentences.append(tokens)
-
-    for s in abc.sents():
-        s = list(filter(lambda x: x.isalpha() and len(x) > 1, s))
-        s = [x.lower() for x in s]  # Do we want everything in lowercase?
-        tokenized_sentences.append(s)
-
-    for s in brown.sents():
-        s = list(filter(lambda x: x.isalpha() and len(x) > 1, s))
-        s = [x.lower() for x in s]  # Do we want everything in lowercase?
-        tokenized_sentences.append(s)
-
-    print("------------TRAINING FASTTEXT-----------")
-
-    model = FastText(tokenized_sentences, size=100, window=5, min_count=5, workers=4, sg=1)
-
-    print("----------------DONE-------------")
-    return model
-
 
 def evaluate_replacement():
     return 0
@@ -70,36 +35,11 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     """
     Generates a bunch of word pairs depending on input word pairs and emotion.
     """
-
-    model_name = 'bible_model'
-    model_dir = get_path('data/' + model_name)
-
-    exists = os.path.isfile(model_dir)
-    if exists:
-        print('Found a pretrained FastText model')
-        model = FastText.load(model_dir)
-    else:
-        model = train_model()
-        model.save(model_dir)
-    print(model)
+    print("Loading model into memory (will take a minute)")
+    word_vec = api.load("glove-wiki-gigaword-100")
+    print("LOADED")
 
     final_pairs = []
-    for pair in word_pairs:
-        # changed_pair =[]
-        noun = find_alternative(pair[0], ['NN', 'NNS', 'NNP', 'NNPS'], model)
-        adjective = find_alternative(pair[1], ['JJ', 'JJR', 'JJS'], model)
-        changed_pair = [noun, adjective]
-
-        """
-        for word in pair['word_pair']:
-
-            similar_words_fast = model.wv.similar_by_word(word, 10)
-            print("similar words to " + word , similar_words_fast)
-            
-            changed_pair.append(similar_words_fast[4])
-        """
-
-        final_pairs.append(changed_pair)
 
     if DEBUG:
         for p in final_pairs:
@@ -108,23 +48,32 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
             print(type(p[0]))
             print("__________________")
 
+    for pair in word_pairs:
+        noun, adjc = find_alternative(pair, word_vec)
+        
+        changed_pair = [noun, adjc]
+        final_pairs.append(changed_pair)
+
     # return method needs work such that it returns the correct thing - DONE
     return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
 
 
-def find_alternative(word, part_of_speechs, model):
-    tries = 10
+def find_alternative(word, word_vec):
+    tries = 20
     while True:
-        similar_words_fast = model.wv.similar_by_word(word, tries)
-        if DEBUG: print("similar words to " + word, similar_words_fast)
-
-        tagged = nltk.pos_tag([x[0] for x in similar_words_fast])
-        right_part = [x[0] for x in tagged if x[1] in part_of_speechs]
-        if right_part:
-            index = randint(0, len(right_part)-1)
-            return right_part[index]
-        tries += 10
-        # return 'foo'
+        similarword = word_vec.most_similar(positive=[word[0],word[1]], topn = tries)
+        tagged = nltk.pos_tag([x[0] for x in similarword])
+        nouns = [x[0] for x in tagged if x[1] in ['NN', 'NNS', 'NNP', 'NNPS']]
+        adjc = [x[0] for x in tagged if x[1] in ['JJ', 'JJR', 'JJS']]
+        if nouns:
+            if adjc:
+                idx_noun = randint(0,len(nouns)-1)
+                idx_adjc = randint(0,len(adjc)-1)
+                selectendNN = nouns[idx_noun]
+                selectedJJ = adjc[idx_adjc]
+                return selectendNN, selectedJJ
+        tries += 5
+        
 
 
 # For testing
