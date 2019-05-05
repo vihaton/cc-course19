@@ -18,3 +18,12 @@ def read_json_file(filename):
 def get_path(filename):
     base_path = os.path.dirname(os.path.abspath(__file__))
     return "".join([base_path, "/", filename])
+
+
+def get_syllables_func(syllable_dictionary):
+    def get_syllables(word):
+        if word in syllable_dictionary:
+            return len(syllable_dictionary[word][0])
+        else:
+            return len(word)/2
+    return get_syllables

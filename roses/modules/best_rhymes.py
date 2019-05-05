@@ -16,13 +16,15 @@ LASTWORDLINE2 = "help"
 def rhyme(inp, level):
     entries = nltk.corpus.cmudict.entries()
     syllables = [(word, syl) for word, syl in entries if word == inp]
-    if DEBUG: print('syllables before matching rhymes', syllables)
+    if DEBUG:
+        print('syllables before matching rhymes', syllables)
     rhymes = []
     for (word, syllable) in syllables:
         rhyming_words = [word for word, pron in entries if pron[-level:] == syllable[-level:]]
         rhyming_words = evaluate_rhymes(word, rhyming_words, REMOVE_SUBWORD_RHYMES)
         rhymes += rhyming_words
-        if DEBUG: print(rhymes, " how many rhymes ", len(rhymes))
+        if DEBUG:
+            print(rhymes, " how many rhymes ", len(rhymes))
 
     return rhymes
 
