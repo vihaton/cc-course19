@@ -148,12 +148,12 @@ def evaluate_poems(emotion: str, word_pairs: List[Tuple[str, str]], poems: List[
     for i, poem in enumerate(poems):
         if DEBUG:
             print(f'for poem {poem}')
-        scores[i] += eval_semantics(poem)
-        scores[i] += eval_length(poem)
-        scores[i] += eval_rhythm(poem)
-        scores[i] += eval_rhyming(poem)
-        scores[i] += eval_similarity_to_emotion(poem, emotion, model)
-        scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs)
+        scores[i] += eval_semantics(poem)*0.0
+        scores[i] += eval_length(poem)*0.1
+        scores[i] += eval_rhythm(poem)*0.35
+        scores[i] += eval_rhyming(poem)*0.2
+        scores[i] += eval_similarity_to_emotion(poem, emotion, model)*0.3
+        scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs)*0.05
 
     return list(zip(poems, scores))
 
