@@ -94,7 +94,7 @@ class PoemCreator:
         print("Group Roses create with input args: {} {}".format(emotion, word_pairs))
         poems = self.evaluate(emotion, word_pairs,
                               self.generate(emotion, word_pairs))
-        poems.sort(key=lambda x: x[1])
+        poems.sort(key=lambda x: -x[1])
         return list(map(lambda x: ('\n'.join(x[0]), {'evaluation': x[1]}), poems[0:number_of_artifacts]))
 
 
