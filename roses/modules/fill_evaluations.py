@@ -49,7 +49,7 @@ def eval_length(poem: List[str]):
     return score
 
 
-def eval_rhytm(poem: List[str]):
+def eval_rhythm(poem: List[str]):
     """
     Does it have a nice rhythm, ie. a good amount of syllables in right places?
 
@@ -63,9 +63,10 @@ def eval_rhytm(poem: List[str]):
         line_syllables[i] = sum(map(get_syllables_func(syllable_dictionary), line.split(' ')))
 
     diff_1_3 = abs(line_syllables[1] - line_syllables[3])
-    value = np.clip(1 - penalty * diff_1_3, *SCALE)
+    diff_3_4 = abs(line_syllables[2] - line_syllables[3])
+    value = np.clip(1 - penalty * min(diff_1_3, diff_3_4), *SCALE)
     if DEBUG:
-        print(f'\teval rythm score: {value}')
+        print(f'\teval rhythm score: {value}')
     return value
 
 
@@ -155,7 +156,7 @@ def evaluate_poems(emotion: str, word_pairs: List[Tuple[str, str]], poems: List[
             print(f'for poem {poem}')
         scores[i] += eval_semantics(poem)
         scores[i] += eval_length(poem)
-        scores[i] += eval_rhytm(poem)
+        scores[i] += eval_rhythm(poem)
         scores[i] += eval_rhyming(poem)
         scores[i] += eval_similarity_to_emotion(poem, emotion, model)
         scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs)
