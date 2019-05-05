@@ -65,7 +65,7 @@ def eval_rhytm(poem: List[str]):
     diff_1_3 = abs(line_syllables[1] - line_syllables[3])
     value = np.clip(1 - penalty * diff_1_3, *SCALE)
     if DEBUG:
-        print(f'Rythm score: {value}')
+        print(f'\teval rythm score: {value}')
     return value
 
 
