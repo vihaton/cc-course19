@@ -7,6 +7,8 @@ from gensim.models import FastText
 from nltk.corpus import abc
 from nltk.corpus import brown
 
+from roses.utils import get_hamming_distance
+
 DEBUG = False
 
 # MUST TO DO
@@ -60,17 +62,7 @@ def eval_rhyming(poem: List[str]):
     rhyme1 = poem[1].split(' ')[-1]
     rhyme2 = poem[3].split(' ')[-1]
 
-    def get_score(longer, shorter):
-        padded1 = f'{shorter:0>{len(longer)}}'
-        padded2 = f'{shorter:0<{len(longer)}}'
-        score1 = sum(c1 != c2 for c1, c2 in zip(padded1, longer))
-        score2 = sum(c1 != c2 for c1, c2 in zip(padded2, longer))
-        return min(score1, score2)
-
-    if len(rhyme2)>len(rhyme1):
-        score = get_score(rhyme2, rhyme1)
-    else:
-        score = get_score(rhyme1, rhyme2)
+    score = get_hamming_distance(rhyme2, rhyme1)
 
     scaled_score = min(score, 5)/5
     if DEBUG: print(f'\teval rhyming score {scaled_score}')
