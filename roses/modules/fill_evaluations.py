@@ -10,7 +10,7 @@ from nltk.corpus import brown
 DEBUG = False
 
 # MUST TO DO
-# TODO set weights for different sub evaluations to decide what we value and make them comperable!
+# TODO set weights for different sub evaluations to decide what we value!
 
 # FURTHER DEVELOPMENT
 # TODO evaluate novelty w.r.t. all the poems written previously (pushes the algo to search different parts of T)
@@ -34,9 +34,8 @@ def eval_length(poem: List[str]):
 
     length = sum(len(line) for line in poem)
 
-    score = optimal_length - length
-    # score = np.sqrt(np.abs(length - optimal_length))
-    # score = np.exp(-score)
+    score = 150 - np.abs(optimal_length - length) # max 150
+    score /= 150
     if DEBUG: print(f'\teval length score {score}')
     return score
 
@@ -61,8 +60,8 @@ def eval_similarity_to_emotion(poem: List[str], emotion: str, model):
   score = 0
   for line in poem:
     s = model.wv.similarity(emotion, line)
-    if DEBUG: 
-      print(f'\tsimilarity to emotion {emotion} for line \n\t\t{line} \n\t\twas {s}')
+    # if DEBUG: 
+    #   print(f'\tsimilarity to emotion {emotion} for line \n\t\t{line} \n\t\twas {s}')
     score += s
   
   if DEBUG: 
@@ -135,7 +134,12 @@ if __name__ == '__main__':
          "human is boss",
          "this project is not done",
          "and you should be closs"
-         ],        
+         ],
+         ['Roses are red',
+          'humane is anecdotal',
+          'and see',
+          'nor by battle'
+         ],
          ["Roses are red",
          "human is boss",
          "this project is not done",
