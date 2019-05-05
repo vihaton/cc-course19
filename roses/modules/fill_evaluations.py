@@ -17,7 +17,7 @@ def eval_semantics(poem: List[str]):
 
 def eval_length(poem: List[str]):
     """
-    Is it nice length? Punishes hardly if the poem is long
+    Is it nice length? Penalizes long poems.
 
     optimal length - length.
     """
@@ -53,10 +53,11 @@ def eval_dissimilarity_to_word_pairs(poem: List[str], word_pairs: List[Tuple[str
   
   Measure distance to the original words, the longer the better. Does this make sense? IDK."""
 
-    score = 0
     for pair in word_pairs:
-        score += poem[1].find(pair[0])
-        score += poem[1].find(pair[1])
+      score = 0
+      score += poem[1].find(pair[0])
+      # if DEBUG: print(f'\t{poem[1]} \t{pair[0]}\n\tscore dissimilarity find {score}')
+      score += poem[1].find(pair[1])
     score = np.exp(-score)
     if DEBUG:
         print(f'\tscore for dissimilarity to word pairs {score}')
@@ -80,11 +81,17 @@ def evaluate_poems(emotion: str, word_pairs: List[Tuple[str, str]], poems: List[
 
     return list(zip(poems, scores))
 
+def sort_poems_by_score(val):
+  return -val[1]
 
 # For testing
 if __name__ == '__main__':
     example_emotion = 'sad'
-    example_word_pairs = [("people", "boss"), ("animal", "legged")]
+    example_word_pairs = [("people", "boss"), ("animal", "legged"), ('activity', 'meeting'), 
+      ('animal', 'venomous'), ('animal', 'social'), ('animal', 'unusual'), ('location', 'cemetery'), 
+      ('weather', 'typhoon'), ('human', 'ruthless'), ('human', 'brutal'), ('human', 'caring'), 
+      ('human', 'liberal'), ('human', 'creative'), ('human', 'barbaric')
+      ]
     example_poems = [
         ["Roses are red",
          "human is boss",
@@ -115,5 +122,6 @@ if __name__ == '__main__':
     ]
     DEBUG = True
     output = evaluate_poems(example_emotion, example_word_pairs, example_poems)
+    output.sort(key = sort_poems_by_score, )
     for poem in output:
       print(poem[1], poem[0])
