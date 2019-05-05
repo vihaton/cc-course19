@@ -1,6 +1,5 @@
 from typing import List, Tuple
 import nltk
-# import gensim
 import os
 from gensim.models import FastText
 from random import randint
@@ -18,45 +17,9 @@ nltk.download('averaged_perceptron_tagger')
 
 DEBUG = False
 
-
-# TODO
-# - evaluate similar words and pick a good replacement
-# - make sure the return method returns the correct things - DONE
-# - possibly make a way to save the model and reload it - STARTED, runs nicely here
-#       but doesn't work from main.py yet 
-
-
-
+# unused, evaluation moved to evaluation module
 def evaluate_replacement():
     return 0
-
-
-def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
-    """
-    Generates a bunch of word pairs depending on input word pairs and emotion.
-    """
-    print("Loading model into memory (will take a minute)")
-    word_vec = api.load("glove-wiki-gigaword-100")
-    print("LOADED")
-
-    final_pairs = []
-
-    if DEBUG:
-        for p in final_pairs:
-            print(p[0])
-            print(p[1])
-            print(type(p[0]))
-            print("__________________")
-
-    for pair in word_pairs:
-        noun, adjc = find_alternative(pair, word_vec)
-        
-        changed_pair = [noun, adjc]
-        final_pairs.append(changed_pair)
-
-    # return method needs work such that it returns the correct thing - DONE
-    return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
-
 
 def find_alternative(word, word_vec):
     tries = 20
@@ -73,6 +36,27 @@ def find_alternative(word, word_vec):
                 selectedJJ = adjc[idx_adjc]
                 return selectendNN, selectedJJ
         tries += 5
+
+def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
+    """
+    Generates a bunch of word pairs depending on input word pairs.
+    """
+    print("Loading model into memory (will take a minute)")
+    word_vec = api.load("glove-wiki-gigaword-100")
+    print("LOADED")
+
+    final_pairs = []
+
+    for pair in word_pairs:
+        noun, adjc = find_alternative(pair, word_vec)
+        changed_pair = [noun, adjc]
+        final_pairs.append(changed_pair)
+
+    # return method needs work such that it returns the correct thing - DONE
+    return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
+
+
+
         
 
 
