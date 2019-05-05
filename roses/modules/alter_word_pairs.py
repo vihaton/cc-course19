@@ -5,17 +5,55 @@ from gensim.models import FastText
 from random import randint
 import gensim.downloader as api
 
-# # This was a workaround for utils-module not found -error,
-# # there must be a better way to do it.
-# import sys
-# sys.path.append("..")
-
 from roses.utils import read_json_file, get_path
-
-# TODO where should these be run?
+nltk.download('abc')
+nltk.download('brown')
+nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
+from nltk.corpus import abc
+from nltk.corpus import brown
+
 DEBUG = False
+
+
+# TODO
+# - evaluate similar words and pick a good replacement
+# - make sure the return method returns the correct things - DONE
+# - possibly make a way to save the model and reload it - STARTED, runs nicely here
+#       but doesn't work from main.py yet 
+
+
+def train_model():
+    data = read_json_file("data/bible_kjv_wrangled.json")
+    sentences = list(data.values())
+    # Do we want everything in lowercase?
+    sentences = [s.lower() for s in sentences]
+
+    print("-----------Tokenize corpus-------------")
+    tokenized_sentences = []
+    for s in sentences:
+        tokens = nltk.word_tokenize(s)
+        tokenized_sentences.append(tokens)
+
+    for s in abc.sents():
+        s = list(filter(lambda x: x.isalpha() and len(x) > 1, s))
+        s = [x.lower() for x in s]  # Do we want everything in lowercase?
+        tokenized_sentences.append(s)
+
+    for s in brown.sents():
+        s = list(filter(lambda x: x.isalpha() and len(x) > 1, s))
+        s = [x.lower() for x in s]  # Do we want everything in lowercase?
+        tokenized_sentences.append(s)
+
+    print("------------TRAINING FASTTEXT-----------")
+
+    model = FastText(tokenized_sentences, size=100, window=5, min_count=5, workers=4, sg=1)
+
+    print("----------------DONE-------------")
+    return model
+
+
 
 # unused, evaluation moved to evaluation module
 def evaluate_replacement():
@@ -41,7 +79,19 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     """
     Generates a bunch of word pairs depending on input word pairs.
     """
-    print("Loading model into memory (will take a minute)")
+    model_name = 'bible_model'
+    model_dir = get_path('data/' + model_name)
+
+    exists = os.path.isfile(model_dir)
+    if exists:
+        print('Found a pretrained FastText Bible model')
+        model = FastText.load(model_dir)
+    else:
+        model = train_model()
+        model.save(model_dir)
+    print(model)
+
+    print("Loading pretrained model into memory (will take a minute)")
     word_vec = api.load("glove-wiki-gigaword-100")
     print("LOADED")
 
