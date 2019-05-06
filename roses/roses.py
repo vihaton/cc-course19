@@ -41,16 +41,20 @@ class PoemCreator:
         t1 = time.time()
         part1 = generate_word_pairs(emotion, word_pairs)
         t2 = time.time()
-        if DEBUG: print(f'### time for part1 {t2-t1} \n\tinput was {emotion} {word_pairs}')
+        if DEBUG:
+            print(f'### time for part1 {t2-t1} \n\tinput was {emotion} {word_pairs}')
         part2 = generate_rhyming_words(emotion, part1)
         t1 = time.time()
-        if DEBUG: print(f'\n### time for part2 {t1-t2} \n\tinput was {emotion} part1')
+        if DEBUG:
+            print(f'\n### time for part2 {t1-t2} \n\tinput was {emotion} part1')
         part3 = find_lines(emotion, part2)
         t2 = time.time()
-        if DEBUG: print(f'\n### time for part3 {t2-t1}\n\tinput was {emotion} part2\n\tinput length {len(part2)}')
+        if DEBUG:
+            print(f'\n### time for part3 {t2-t1}\n\tinput was {emotion} part2\n\tinput length {len(part2)}')
         part4 = alter_rest(emotion, part3)
         t1 = time.time()
-        if DEBUG: print(f'\n### time for part4 {t1-t2} \n\tinput was {emotion} part3\n\tinput length {len(part3)}')
+        if DEBUG:
+            print(f'\n### time for part4 {t1-t2} \n\tinput was {emotion} part3\n\tinput length {len(part3)}')
         self.poems = fill_and_create_text(
             emotion,
             part4

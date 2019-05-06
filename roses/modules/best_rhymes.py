@@ -1,4 +1,5 @@
 from typing import Dict, List, Tuple
+
 import nltk
 
 nltk.download('cmudict')
@@ -7,12 +8,6 @@ DEBUG = False
 REMOVE_SUBWORD_RHYMES = True
 MAX_RHYMES = 25
 
-WORDS = ['crisscross', 'dos', 'chess', 'completed', 'depleted', 'hugged']
-
-# this is a placeholder because I dont know to get it from
-# generate_rhyming_words(emotion: str, word_pairs: List[Dict[str, Tuple[str, str]]])
-LASTWORDLINE2 = "help"
-
 
 def rhyme(inp, level):
     entries = nltk.corpus.cmudict.entries()
@@ -20,14 +15,14 @@ def rhyme(inp, level):
     if DEBUG:
         print('syllables before matching rhymes', syllables)
     rhymes = []
-    for (word, syllable) in syllables:
+    for (word1, syllable) in syllables:
         rhyming_words = []
-        for word, pron in entries:
+        for word2, pron in entries:
             if pron[-level:] == syllable[-level:]:
-                rhyming_words.append(word)
-            if len(rhyming_words) > MAX_RHYMES: # we have enough rhymes already
+                rhyming_words.append(word2)
+            if len(rhyming_words) > MAX_RHYMES:  # we have enough rhymes already
                 break
-        rhyming_words = evaluate_rhymes(word, rhyming_words, REMOVE_SUBWORD_RHYMES)
+        rhyming_words = evaluate_rhymes(word1, rhyming_words, REMOVE_SUBWORD_RHYMES)
         rhymes += rhyming_words
         if DEBUG:
             print(rhymes, " how many rhymes ", len(rhymes))
@@ -44,16 +39,19 @@ def evaluate_rhymes(word: str, rhymes: List[str], remove_subwords=False) -> List
     if not remove_subwords:
         return list(set(rhymes) - set(word))  # remove only the word itself
 
-    if DEBUG: print(len(rhymes), " rhymes before pruning")
+    if DEBUG:
+        print(len(rhymes), " rhymes before pruning")
     to_be_removed = []
 
     for rhyme in rhymes:
-        if rhyme in word:
-            if DEBUG: print(rhyme + ' is going to be deleted for word ' + word)
+        if rhyme in word or word in rhyme:
+            if DEBUG:
+                print(rhyme + ' is going to be deleted for word ' + word)
             to_be_removed.append(rhyme)
 
     rhymes = list(set(rhymes) - set(to_be_removed))
-    if DEBUG: print(len(rhymes), "after pruning")
+    if DEBUG:
+        print(len(rhymes), "after pruning")
     return rhymes
 
 

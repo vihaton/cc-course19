@@ -1,18 +1,18 @@
 from typing import List, Tuple
 import nltk
+from nltk.corpus import abc
+from nltk.corpus import brown
 import os
 from gensim.models import FastText, KeyedVectors
-from random import randint
 import gensim.downloader as api
+from random import randint
 
 from roses.utils import read_json_file, get_path
+
 nltk.download('abc')
 nltk.download('brown')
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
-
-from nltk.corpus import abc
-from nltk.corpus import brown
 
 DEBUG = False
 
@@ -54,26 +54,22 @@ def train_model():
     return model
 
 
-
-# unused, evaluation moved to evaluation module
-def evaluate_replacement():
-    return 0
-
 def find_alternative(word, word_vec):
     tries = 20
     while True:
-        similarword = word_vec.most_similar(positive=[word[0],word[1]], topn = tries)
+        similarword = word_vec.most_similar(positive=[word[0], word[1]], topn=tries)
         tagged = nltk.pos_tag([x[0] for x in similarword])
         nouns = [x[0] for x in tagged if x[1] in ['NN', 'NNS', 'NNP', 'NNPS']]
         adjc = [x[0] for x in tagged if x[1] in ['JJ', 'JJR', 'JJS']]
         if nouns:
             if adjc:
-                idx_noun = randint(0,len(nouns)-1)
-                idx_adjc = randint(0,len(adjc)-1)
-                selectendNN = nouns[idx_noun]
-                selectedJJ = adjc[idx_adjc]
-                return selectendNN, selectedJJ
+                idx_noun = randint(0, len(nouns) - 1)
+                idx_adjc = randint(0, len(adjc) - 1)
+                selectend_nn = nouns[idx_noun]
+                selected_jj = adjc[idx_adjc]
+                return selectend_nn, selected_jj
         tries += 5
+
 
 def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     """
@@ -90,8 +86,6 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
         model = train_model()
         model.save(model_dir)
 
-
-
     wv_model_name = 'wv_model'
     wv_model_dir = get_path('data/' + wv_model_name)
 
@@ -105,7 +99,6 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
         word_vec.save(wv_model_dir)
         print("LOADED AND SAVED")
 
-
     final_pairs = []
 
     for pair in word_pairs:
@@ -118,10 +111,6 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
 
     # return method needs work such that it returns the correct thing - DONE
     return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
-
-
-
-        
 
 
 # For testing
