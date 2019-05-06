@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
   "folders": ["tittles", "random_team", "group_picasso", "graphical_group_01", "roses"]
+=======
+  "folders": ["random_team", "group_picasso", "graphical_group_01", "roses", "tittles"]
+>>>>>>> upstream/master
 }
