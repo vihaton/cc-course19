@@ -116,9 +116,5 @@ venv.bak/
 group_picasso/arbitrary_style_transfer.tar.gz
 gpri/broken_sample.jpg
 
-<<<<<<< HEAD
-.vscode/
-=======
 # Some program folder
 .vscode
->>>>>>> upstream/master
