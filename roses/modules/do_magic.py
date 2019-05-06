@@ -55,14 +55,15 @@ def alter_rest(emotion: str, rhyming_partials: List[Dict]):
             max_similarity = 0
             new_word = word
             if word[1] in ['JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP']:
-                for s in similar_to_emotion:
-                    if s[1] == word[1]:
-                        similarity = model.wv.similarity(s[0], word[0])
-                        if similarity > max_similarity:
-                            max_similarity = similarity
-                            new_word = s  
-                if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
-                third[x] = new_word
+                if word[0] in model.wv.vocab.keys():
+                    for s in similar_to_emotion:
+                        if s[1] == word[1]:
+                            similarity = model.wv.similarity(s[0], word[0])
+                            if similarity > max_similarity:
+                                max_similarity = similarity
+                                new_word = s  
+                    if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
+                    third[x] = new_word
         third = [x[0] for x in third]
 
         # TODO line 4
@@ -74,18 +75,19 @@ def alter_rest(emotion: str, rhyming_partials: List[Dict]):
             max_similarity = 0
             new_word = word
             if word[1] in ['JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP']:
-                for s in similar_to_emotion:
-                    if s[1] == word[1]:
-                        similarity = model.wv.similarity(s[0], word[0])
-                        if similarity > max_similarity:
-                            max_similarity = similarity
-                            new_word = s  
-                if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
-                fourth[x] = new_word
+                if word[0] in model.wv.vocab.keys():
+                    for s in similar_to_emotion:
+                        if s[1] == word[1]:
+                            similarity = model.wv.similarity(s[0], word[0])
+                            if similarity > max_similarity:
+                                max_similarity = similarity
+                                new_word = s  
+                    if DEBUG: print(word, "is replaced by", new_word, 'max similarity was', max_similarity)
+                    fourth[x] = new_word
 
         fourth = [x[0] for x in fourth]
         fourth.append(last_word)
-        if DEBUG: print(fourth)
+        #if DEBUG: print(fourth)
         partial['rest'] = (" ".join(third), " ".join(fourth))
 
         ret.append(partial)
@@ -109,6 +111,6 @@ def old_alter_rest(emotion: str, rhyming_partials: List[Dict]):
 # For testing
 if __name__ == '__main__':
     example_emotion = 'angry'
-    example_rhyming_partials = [{'rest': ["there came an old man from his work out of the field at even", "he shall suffer loss"]}, ]
+    example_rhyming_partials = [{'rest': ["Go nonsense Ye there He Lo No came an old man from his work out of the field at even", "he shall suffer loss"]}, ]
     output = alter_rest(example_emotion, example_rhyming_partials)
     print(output)
