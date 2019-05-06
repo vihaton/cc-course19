@@ -11,6 +11,13 @@ from roses.utils import get_syllables_func, get_hamming_distance
 
 SCALE = (0, 1)
 
+# Weights for individual scores
+# SEMANTICS = 0
+LENGTH = 0.2
+RHYTHM = 0.2
+RHYMING = 0.25
+SIMILARITY = 0.3
+DISSIMILARITY = 0.05
 
 DEBUG = False
 
@@ -148,12 +155,12 @@ def evaluate_poems(emotion: str, word_pairs: List[Tuple[str, str]], poems: List[
     for i, poem in enumerate(poems):
         if DEBUG:
             print(f'for poem {poem}')
-        scores[i] += eval_semantics(poem)
-        scores[i] += eval_length(poem)
-        scores[i] += eval_rhythm(poem)
-        scores[i] += eval_rhyming(poem)
-        scores[i] += eval_similarity_to_emotion(poem, emotion, model)
-        scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs)
+        # scores[i] += eval_semantics(poem)
+        scores[i] += eval_length(poem) * LENGTH
+        scores[i] += eval_rhythm(poem) * RHYTHM
+        scores[i] += eval_rhyming(poem) * RHYMING
+        scores[i] += eval_similarity_to_emotion(poem, emotion, model) * SIMILARITY
+        scores[i] += eval_dissimilarity_to_word_pairs(poem, word_pairs) * DISSIMILARITY
 
     return list(zip(poems, scores))
 
