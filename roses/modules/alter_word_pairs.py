@@ -109,9 +109,12 @@ def generate_word_pairs(emotion: str, word_pairs: List[Tuple[str, str]]):
     final_pairs = []
 
     for pair in word_pairs:
-        noun, adjc = find_alternative(pair, word_vec)
-        changed_pair = [noun, adjc]
-        final_pairs.append(changed_pair)
+        if pair[0] in model.wv.vocab.keys() and pair[1] in model.wv.vocab.keys():
+            noun, adjc = find_alternative(pair, word_vec)
+            changed_pair = [noun, adjc]
+            final_pairs.append(changed_pair)
+        else:
+            final_pairs.append([pair[0], pair[1]])
 
     # return method needs work such that it returns the correct thing - DONE
     return [{'word_pair': (word_pair[0], word_pair[1]), 'verb': 'is'} for word_pair in final_pairs]
